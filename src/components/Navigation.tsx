@@ -2,6 +2,7 @@ import { Brain, LayoutDashboard, Zap, MessageSquare, Settings } from "lucide-rea
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { UserProfileDropdown } from "./UserProfileDropdown";
+import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/utils";
 
 export const Navigation = () => {
@@ -56,8 +57,13 @@ export const Navigation = () => {
               );
             })}
 
+            {/* Theme Toggle */}
+            <div className="ml-2">
+              <ThemeToggle />
+            </div>
+
             {/* User Profile */}
-            <div className="ml-4">
+            <div className="ml-2">
               <UserProfileDropdown />
             </div>
           </div>
