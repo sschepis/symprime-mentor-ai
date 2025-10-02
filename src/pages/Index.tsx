@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Brain, Zap, MessageSquare, TrendingUp, Plus, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,8 +7,26 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { EngineCard } from "@/components/dashboard/EngineCard";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { Navigation } from "@/components/Navigation";
+import { NewEngineDialog } from "@/components/dialogs/NewEngineDialog";
+import { EngineDetailsDialog } from "@/components/dialogs/EngineDetailsDialog";
 
 const Index = () => {
+  const [newEngineOpen, setNewEngineOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedEngine, setSelectedEngine] = useState<any>(null);
+
+  const engines = [
+    { name: "Greek Mythology Engine", autonomy: 85, trainingSessions: 120, lastUsed: "2 hours ago", icon: "🧠" },
+    { name: "Historical Analysis Engine", autonomy: 72, trainingSessions: 80, lastUsed: "1 day ago", icon: "📚" },
+    { name: "Scientific Research Engine", autonomy: 68, trainingSessions: 65, lastUsed: "3 days ago", icon: "🔬" },
+    { name: "Cultural Context Engine", autonomy: 91, trainingSessions: 200, lastUsed: "30 minutes ago", icon: "🌍" },
+  ];
+
+  const handleEngineClick = (engine: any) => {
+    setSelectedEngine(engine);
+    setDetailsOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -26,7 +45,10 @@ const Index = () => {
               Manage your symbolic AI engines and training sessions
             </p>
           </div>
-          <Button className="gap-2 bg-gradient-primary hover:opacity-90 transition-opacity">
+          <Button 
+            className="gap-2 bg-gradient-primary hover:opacity-90 transition-opacity"
+            onClick={() => setNewEngineOpen(true)}
+          >
             <Plus className="w-4 h-4" />
             New Engine
           </Button>
@@ -76,34 +98,11 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <EngineCard
-              name="Greek Mythology Engine"
-              autonomy={85}
-              trainingSessions={120}
-              lastUsed="2 hours ago"
-              icon="🧠"
-            />
-            <EngineCard
-              name="Historical Analysis Engine"
-              autonomy={72}
-              trainingSessions={80}
-              lastUsed="1 day ago"
-              icon="📚"
-            />
-            <EngineCard
-              name="Scientific Research Engine"
-              autonomy={68}
-              trainingSessions={65}
-              lastUsed="3 days ago"
-              icon="🔬"
-            />
-            <EngineCard
-              name="Cultural Context Engine"
-              autonomy={91}
-              trainingSessions={200}
-              lastUsed="30 minutes ago"
-              icon="🌍"
-            />
+            {engines.map((engine) => (
+              <div key={engine.name} onClick={() => handleEngineClick(engine)}>
+                <EngineCard {...engine} />
+              </div>
+            ))}
           </div>
         </section>
 
@@ -137,6 +136,16 @@ const Index = () => {
           </Card>
         </section>
       </main>
+
+      {/* Dialogs */}
+      <NewEngineDialog open={newEngineOpen} onOpenChange={setNewEngineOpen} />
+      {selectedEngine && (
+        <EngineDetailsDialog 
+          open={detailsOpen} 
+          onOpenChange={setDetailsOpen} 
+          engine={selectedEngine}
+        />
+      )}
     </div>
   );
 };

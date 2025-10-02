@@ -1,13 +1,20 @@
+import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Pause, Square, Settings as SettingsIcon, Bot } from "lucide-react";
+import { Pause, Square, Settings as SettingsIcon } from "lucide-react";
 import { AIAssistantPanel } from "@/components/training/AIAssistantPanel";
 import { TrainingConfig } from "@/components/training/TrainingConfig";
 import { TrainingFeed } from "@/components/training/TrainingFeed";
+import { TrainingSettingsDialog } from "@/components/dialogs/TrainingSettingsDialog";
+import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 
 const Training = () => {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
+  const [stopDialogOpen, setStopDialogOpen] = useState(false);
+
   const currentSession = 45;
   const totalSessions = 100;
   const autonomy = 78;
@@ -15,6 +22,16 @@ const Training = () => {
   const patternRecognition = 156;
   const entropy = 3.2;
   const temperature = 0.65;
+
+  const handlePause = () => {
+    console.log("Training paused");
+    setPauseDialogOpen(false);
+  };
+
+  const handleStop = () => {
+    console.log("Training stopped");
+    setStopDialogOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -100,15 +117,27 @@ const Training = () => {
 
               {/* Control Buttons */}
               <div className="flex gap-3 pt-4">
-                <Button variant="outline" className="flex-1 gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex-1 gap-2"
+                  onClick={() => setPauseDialogOpen(true)}
+                >
                   <Pause className="w-4 h-4" />
                   Pause
                 </Button>
-                <Button variant="destructive" className="flex-1 gap-2">
+                <Button 
+                  variant="destructive" 
+                  className="flex-1 gap-2"
+                  onClick={() => setStopDialogOpen(true)}
+                >
                   <Square className="w-4 h-4" />
                   Stop
                 </Button>
-                <Button variant="outline" size="icon">
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={() => setSettingsOpen(true)}
+                >
                   <SettingsIcon className="w-4 h-4" />
                 </Button>
               </div>
@@ -136,6 +165,26 @@ const Training = () => {
           </div>
         </div>
       </main>
+
+      {/* Dialogs */}
+      <TrainingSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <ConfirmDialog
+        open={pauseDialogOpen}
+        onOpenChange={setPauseDialogOpen}
+        title="Pause Training"
+        description="Are you sure you want to pause the training session? You can resume it later."
+        onConfirm={handlePause}
+        confirmText="Pause"
+      />
+      <ConfirmDialog
+        open={stopDialogOpen}
+        onOpenChange={setStopDialogOpen}
+        title="Stop Training"
+        description="Are you sure you want to stop the training session? This will end the current session and save progress."
+        onConfirm={handleStop}
+        confirmText="Stop Training"
+        variant="destructive"
+      />
     </div>
   );
 };

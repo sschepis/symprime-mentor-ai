@@ -1,10 +1,22 @@
+import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User } from "lucide-react";
+import { Send, Bot, User, Download, Trash2, Settings } from "lucide-react";
+import { ExportConversationDialog } from "@/components/dialogs/ExportConversationDialog";
+import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Inference = () => {
+  const [exportOpen, setExportOpen] = useState(false);
+  const [clearChatOpen, setClearChatOpen] = useState(false);
+
+  const handleClearChat = () => {
+    console.log("Chat cleared");
+    setClearChatOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
@@ -13,13 +25,37 @@ const Inference = () => {
       
       <main className="relative flex-1 container mx-auto px-6 py-8 flex flex-col">
         {/* Header */}
-        <header className="mb-6">
-          <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent">
-            Inference Chat
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Natural language interaction with Greek Mythology Engine
-          </p>
+        <header className="mb-6 flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent">
+              Inference Chat
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Natural language interaction with Greek Mythology Engine
+            </p>
+          </div>
+          
+          {/* Chat Actions */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Settings className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-card border-border z-50">
+              <DropdownMenuItem onClick={() => setExportOpen(true)} className="cursor-pointer">
+                <Download className="mr-2 h-4 w-4" />
+                Export Conversation
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setClearChatOpen(true)} 
+                className="cursor-pointer text-destructive focus:text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Clear Chat
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </header>
 
         {/* Chat Container */}
@@ -160,6 +196,18 @@ const Inference = () => {
           </div>
         </div>
       </main>
+
+      {/* Dialogs */}
+      <ExportConversationDialog open={exportOpen} onOpenChange={setExportOpen} />
+      <ConfirmDialog
+        open={clearChatOpen}
+        onOpenChange={setClearChatOpen}
+        title="Clear Chat"
+        description="Are you sure you want to clear this conversation? This action cannot be undone."
+        onConfirm={handleClearChat}
+        confirmText="Clear Chat"
+        variant="destructive"
+      />
     </div>
   );
 };

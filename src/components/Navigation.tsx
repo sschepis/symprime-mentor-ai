@@ -1,6 +1,7 @@
-import { Brain, LayoutDashboard, Zap, MessageSquare, Settings, User } from "lucide-react";
+import { Brain, LayoutDashboard, Zap, MessageSquare, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { UserProfileDropdown } from "./UserProfileDropdown";
 import { cn } from "@/lib/utils";
 
 export const Navigation = () => {
@@ -53,9 +54,9 @@ export const Navigation = () => {
             })}
 
             {/* User Profile */}
-            <Button variant="ghost" size="icon" className="ml-4 rounded-full">
-              <User className="w-5 h-5" />
-            </Button>
+            <div className="ml-4">
+              <UserProfileDropdown />
+            </div>
           </div>
         </div>
       </div>

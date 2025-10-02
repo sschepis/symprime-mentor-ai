@@ -20,7 +20,7 @@ export const EngineCard = ({
   icon 
 }: EngineCardProps) => {
   return (
-    <Card className="glass-card p-6 hover:border-primary/50 transition-all duration-300 group">
+    <Card className="glass-card p-6 hover:border-primary/50 transition-all duration-300 group cursor-pointer">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between">
