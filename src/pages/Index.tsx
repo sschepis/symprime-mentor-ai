@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Brain, Zap, MessageSquare, TrendingUp, Plus, Settings } from "lucide-react";
+import { Brain, Zap, MessageSquare, TrendingUp, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { StatCard } from "@/components/dashboard/StatCard";
 import { EngineCard } from "@/components/dashboard/EngineCard";
-import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
-import { Navigation } from "@/components/Navigation";
 import { NewEngineDialog } from "@/components/dialogs/NewEngineDialog";
 import { EngineDetailsDialog } from "@/components/dialogs/EngineDetailsDialog";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { StatsGrid, StatItem } from "@/components/common/StatsGrid";
+import { ActivityList, ActivityItem } from "@/components/common/ActivityList";
+import { BarChart3, Target } from "lucide-react";
 
 const Index = () => {
   const [newEngineOpen, setNewEngineOpen] = useState(false);
@@ -22,29 +24,32 @@ const Index = () => {
     { name: "Cultural Context Engine", autonomy: 91, trainingSessions: 200, lastUsed: "30 minutes ago", icon: "🌍" },
   ];
 
+  const stats: StatItem[] = [
+    { icon: Brain, label: "Engines", value: "5", change: "+2 this week", iconColor: "text-primary" },
+    { icon: Zap, label: "Training Sessions", value: "12", change: "3 active", iconColor: "text-accent" },
+    { icon: MessageSquare, label: "Queries", value: "1.2k", change: "+15% this week", iconColor: "text-secondary" },
+    { icon: TrendingUp, label: "Avg Autonomy", value: "82%", change: "+5% improvement", iconColor: "text-success" },
+  ];
+
+  const activities: ActivityItem[] = [
+    { icon: Zap, title: "Training session completed", description: "Greek Mythology Engine", time: "2 minutes ago", color: "text-accent" },
+    { icon: TrendingUp, title: "Autonomy increased to 85%", description: "Greek Mythology Engine", time: "15 minutes ago", color: "text-success" },
+    { icon: Target, title: "100 queries processed", description: "Historical Analysis Engine", time: "1 hour ago", color: "text-secondary" },
+    { icon: BarChart3, title: "New patterns detected", description: "Scientific Research Engine", time: "3 hours ago", color: "text-primary" },
+    { icon: Zap, title: "Training session started", description: "Cultural Context Engine", time: "5 hours ago", color: "text-accent" },
+  ];
+
   const handleEngineClick = (engine: any) => {
     setSelectedEngine(engine);
     setDetailsOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      {/* Hero gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 pointer-events-none" />
-      
-      <main className="relative container mx-auto px-6 py-8 space-y-8">
-        {/* Header */}
-        <header className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Dashboard
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Manage your symbolic AI engines and training sessions
-            </p>
-          </div>
+    <PageLayout>
+      <PageHeader
+        title="Dashboard"
+        description="Manage your symbolic AI engines and training sessions"
+        actions={
           <Button 
             className="gap-2 bg-gradient-primary hover:opacity-90 transition-opacity"
             onClick={() => setNewEngineOpen(true)}
@@ -52,38 +57,13 @@ const Index = () => {
             <Plus className="w-4 h-4" />
             New Engine
           </Button>
-        </header>
+        }
+      />
 
+      <div className="space-y-8">
         {/* Quick Stats */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard
-            icon={Brain}
-            label="Engines"
-            value="5"
-            change="+2 this week"
-            iconColor="text-primary"
-          />
-          <StatCard
-            icon={Zap}
-            label="Training Sessions"
-            value="12"
-            change="3 active"
-            iconColor="text-accent"
-          />
-          <StatCard
-            icon={MessageSquare}
-            label="Queries"
-            value="1.2k"
-            change="+15% this week"
-            iconColor="text-secondary"
-          />
-          <StatCard
-            icon={TrendingUp}
-            label="Avg Autonomy"
-            value="82%"
-            change="+5% improvement"
-            iconColor="text-success"
-          />
+        <section>
+          <StatsGrid stats={stats} />
         </section>
 
         {/* My Engines */}
@@ -109,7 +89,7 @@ const Index = () => {
         {/* Recent Activity */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <ActivityFeed />
+            <ActivityList title="Recent Activity" activities={activities} />
           </div>
           
           {/* Quick Actions */}
@@ -127,15 +107,9 @@ const Index = () => {
                 New Chat
               </Button>
             </Link>
-            <Link to="/settings" className="block">
-              <Button variant="outline" className="w-full justify-start gap-3 hover:bg-primary/10 transition-colors">
-                <Settings className="w-4 h-4 text-muted-foreground" />
-                Settings
-              </Button>
-            </Link>
           </Card>
         </section>
-      </main>
+      </div>
 
       {/* Dialogs */}
       <NewEngineDialog open={newEngineOpen} onOpenChange={setNewEngineOpen} />
@@ -146,7 +120,7 @@ const Index = () => {
           engine={selectedEngine}
         />
       )}
-    </div>
+    </PageLayout>
   );
 };
 

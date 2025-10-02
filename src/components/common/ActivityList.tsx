@@ -1,48 +1,23 @@
+import { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { BarChart3, Zap, Target, TrendingUp } from "lucide-react";
 
-const activities = [
-  {
-    icon: Zap,
-    title: "Training session completed",
-    description: "Greek Mythology Engine",
-    time: "2 minutes ago",
-    color: "text-accent",
-  },
-  {
-    icon: TrendingUp,
-    title: "Autonomy increased to 85%",
-    description: "Greek Mythology Engine",
-    time: "15 minutes ago",
-    color: "text-success",
-  },
-  {
-    icon: Target,
-    title: "100 queries processed",
-    description: "Historical Analysis Engine",
-    time: "1 hour ago",
-    color: "text-secondary",
-  },
-  {
-    icon: BarChart3,
-    title: "New patterns detected",
-    description: "Scientific Research Engine",
-    time: "3 hours ago",
-    color: "text-primary",
-  },
-  {
-    icon: Zap,
-    title: "Training session started",
-    description: "Cultural Context Engine",
-    time: "5 hours ago",
-    color: "text-accent",
-  },
-];
+export interface ActivityItem {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  time: string;
+  color: string;
+}
 
-export const ActivityFeed = () => {
+interface ActivityListProps {
+  title?: string;
+  activities: ActivityItem[];
+}
+
+export const ActivityList = ({ title, activities }: ActivityListProps) => {
   return (
     <Card className="glass-card p-6">
-      <h3 className="text-xl font-semibold mb-6">Recent Activity</h3>
+      {title && <h3 className="text-xl font-semibold mb-6">{title}</h3>}
       <div className="space-y-4">
         {activities.map((activity, index) => {
           const Icon = activity.icon;

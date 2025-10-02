@@ -1,21 +1,23 @@
-import { Navigation } from "@/components/Navigation";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { StatsGrid, StatItem } from "@/components/common/StatsGrid";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Mail, MapPin, Briefcase, Globe, Github, Twitter, Linkedin } from "lucide-react";
+import { Calendar, Mail, MapPin, Briefcase, Github, Twitter, Linkedin, Globe } from "lucide-react";
 
 const Profile = () => {
+  const stats: StatItem[] = [
+    { label: "Engines", value: "5" },
+    { label: "Training Sessions", value: "357" },
+    { label: "Queries Processed", value: "12.4k" },
+    { label: "Avg Autonomy", value: "82%" },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-      
-      <main className="relative container mx-auto px-6 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
+    <PageLayout>
+      <div className="max-w-4xl mx-auto space-y-6">
           {/* Profile Header */}
           <Card className="glass-card p-8">
             <div className="flex flex-col md:flex-row gap-6">
@@ -90,24 +92,7 @@ const Profile = () => {
           </Card>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="glass-card p-4 text-center">
-              <p className="text-3xl font-bold text-primary">5</p>
-              <p className="text-sm text-muted-foreground">Engines</p>
-            </Card>
-            <Card className="glass-card p-4 text-center">
-              <p className="text-3xl font-bold text-accent">357</p>
-              <p className="text-sm text-muted-foreground">Training Sessions</p>
-            </Card>
-            <Card className="glass-card p-4 text-center">
-              <p className="text-3xl font-bold text-secondary">12.4k</p>
-              <p className="text-sm text-muted-foreground">Queries Processed</p>
-            </Card>
-            <Card className="glass-card p-4 text-center">
-              <p className="text-3xl font-bold text-success">82%</p>
-              <p className="text-sm text-muted-foreground">Avg Autonomy</p>
-            </Card>
-          </div>
+          <StatsGrid stats={stats} columns={4} centered hoverable={false} />
 
           {/* Recent Activity */}
           <Card className="glass-card p-6">
@@ -150,8 +135,7 @@ const Profile = () => {
             </div>
           </Card>
         </div>
-      </main>
-    </div>
+    </PageLayout>
   );
 };
 

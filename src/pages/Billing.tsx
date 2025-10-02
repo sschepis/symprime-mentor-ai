@@ -1,27 +1,61 @@
-import { Navigation } from "@/components/Navigation";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Download, Calendar, Check, Zap } from "lucide-react";
+import { CreditCard, Download, Zap } from "lucide-react";
+import { FeatureList } from "@/components/common/FeatureList";
+import { InvoiceItem, InvoiceData } from "@/components/common/InvoiceItem";
+import { PlanCard, PlanData } from "@/components/common/PlanCard";
 
 const Billing = () => {
-  return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-      
-      <main className="relative container mx-auto px-6 py-8">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Billing & Subscription
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your subscription and payment methods
-          </p>
-        </header>
+  const planFeatures = [
+    "Unlimited engines",
+    "Advanced AI assistant",
+    "Priority training",
+    "Custom symbol mappings",
+    "API access",
+    "Priority support",
+    "Export capabilities",
+    "Team collaboration"
+  ];
 
-        <div className="max-w-5xl mx-auto space-y-6">
+  const invoices: InvoiceData[] = [
+    { date: "Mar 15, 2024", amount: "$49.00", status: "Paid", invoice: "INV-2024-003" },
+    { date: "Feb 15, 2024", amount: "$49.00", status: "Paid", invoice: "INV-2024-002" },
+    { date: "Jan 15, 2024", amount: "$49.00", status: "Paid", invoice: "INV-2024-001" },
+  ];
+
+  const plans: PlanData[] = [
+    {
+      name: "Starter",
+      price: "$19",
+      features: ["5 engines", "100 training sessions/mo", "Basic AI assistant", "Email support"],
+      current: false
+    },
+    {
+      name: "Premium",
+      price: "$49",
+      features: ["Unlimited engines", "Unlimited training", "Advanced AI assistant", "Priority support"],
+      current: true,
+      popular: true
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      features: ["Everything in Premium", "Dedicated support", "Custom integrations", "SLA guarantee"],
+      current: false
+    }
+  ];
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title="Billing & Subscription"
+        description="Manage your subscription and payment methods"
+      />
+
+      <div className="max-w-5xl mx-auto space-y-6">
           {/* Current Plan */}
           <Card className="glass-card p-6">
             <div className="flex items-start justify-between mb-6">
@@ -51,23 +85,7 @@ const Billing = () => {
 
             <div className="mt-6 pt-6 border-t border-border/50">
               <h3 className="font-semibold mb-3">Plan Features</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {[
-                  "Unlimited engines",
-                  "Advanced AI assistant",
-                  "Priority training",
-                  "Custom symbol mappings",
-                  "API access",
-                  "Priority support",
-                  "Export capabilities",
-                  "Team collaboration"
-                ].map((feature, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-success" />
-                    <span className="text-sm">{feature}</span>
-                  </div>
-                ))}
-              </div>
+              <FeatureList features={planFeatures} />
             </div>
           </Card>
 
@@ -134,90 +152,16 @@ const Billing = () => {
               </Button>
             </div>
 
-            <div className="space-y-2">
-              {[
-                { date: "Mar 15, 2024", amount: "$49.00", status: "Paid", invoice: "INV-2024-003" },
-                { date: "Feb 15, 2024", amount: "$49.00", status: "Paid", invoice: "INV-2024-002" },
-                { date: "Jan 15, 2024", amount: "$49.00", status: "Paid", invoice: "INV-2024-001" },
-              ].map((invoice, idx) => (
-                <div key={idx} className="flex items-center justify-between p-4 bg-muted/20 rounded-lg hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <Calendar className="w-5 h-5 text-muted-foreground" />
-                    <div>
-                      <p className="font-semibold">{invoice.invoice}</p>
-                      <p className="text-sm text-muted-foreground">{invoice.date}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <p className="font-semibold">{invoice.amount}</p>
-                    <Badge variant="outline" className="bg-success/10 text-success border-success/20">
-                      {invoice.status}
-                    </Badge>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <Download className="w-4 h-4" />
-                      Download
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <InvoiceItem invoices={invoices} />
           </Card>
 
           {/* Available Plans */}
           <Card className="glass-card p-6">
             <h2 className="text-xl font-semibold mb-6">Available Plans</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  name: "Starter",
-                  price: "$19",
-                  features: ["5 engines", "100 training sessions/mo", "Basic AI assistant", "Email support"],
-                  current: false
-                },
-                {
-                  name: "Premium",
-                  price: "$49",
-                  features: ["Unlimited engines", "Unlimited training", "Advanced AI assistant", "Priority support"],
-                  current: true
-                },
-                {
-                  name: "Enterprise",
-                  price: "Custom",
-                  features: ["Everything in Premium", "Dedicated support", "Custom integrations", "SLA guarantee"],
-                  current: false
-                }
-              ].map((plan, idx) => (
-                <div 
-                  key={idx} 
-                  className={`p-6 rounded-lg border-2 ${plan.current ? 'border-primary bg-primary/5' : 'border-border bg-muted/20'}`}
-                >
-                  <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                  <div className="mb-4">
-                    <span className="text-3xl font-bold">{plan.price}</span>
-                    {plan.price !== "Custom" && <span className="text-muted-foreground">/mo</span>}
-                  </div>
-                  <ul className="space-y-2 mb-6">
-                    {plan.features.map((feature, fidx) => (
-                      <li key={fidx} className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-success" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    className={plan.current ? "w-full bg-gradient-primary hover:opacity-90" : "w-full"} 
-                    variant={plan.current ? "default" : "outline"}
-                    disabled={plan.current}
-                  >
-                    {plan.current ? "Current Plan" : plan.price === "Custom" ? "Contact Sales" : "Upgrade"}
-                  </Button>
-                </div>
-              ))}
-            </div>
+            <PlanCard plans={plans} />
           </Card>
         </div>
-      </main>
-    </div>
+    </PageLayout>
   );
 };
 

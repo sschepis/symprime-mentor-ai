@@ -1,30 +1,36 @@
-import { Navigation } from "@/components/Navigation";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { ResourceCard, ResourceCardData } from "@/components/common/ResourceCard";
+import { FormField } from "@/components/common/FormField";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Search, BookOpen, MessageCircle, Mail, FileText, Video, HelpCircle } from "lucide-react";
+import { Search, BookOpen, MessageCircle, Video, Mail, FileText, HelpCircle } from "lucide-react";
 
 const HelpSupport = () => {
-  return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-      
-      <main className="relative container mx-auto px-6 py-8">
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Help & Support
-          </h1>
-          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-            Find answers to common questions or get in touch with our support team
-          </p>
-        </header>
+  const quickLinks: ResourceCardData[] = [
+    { icon: BookOpen, title: "Documentation", description: "Comprehensive guides and API references", iconColor: "text-primary" },
+    { icon: Video, title: "Video Tutorials", description: "Learn through step-by-step video guides", iconColor: "text-accent" },
+    { icon: MessageCircle, title: "Community Forum", description: "Connect with other users and experts", iconColor: "text-secondary" },
+  ];
 
-        <div className="max-w-5xl mx-auto space-y-8">
+  const additionalResources: ResourceCardData[] = [
+    { icon: BookOpen, title: "API Documentation", description: "Complete API reference and examples", iconColor: "text-primary" },
+    { icon: Video, title: "Getting Started Guide", description: "Step-by-step tutorial for beginners", iconColor: "text-accent" },
+    { icon: FileText, title: "Best Practices", description: "Tips for optimal training results", iconColor: "text-secondary" },
+    { icon: MessageCircle, title: "Community Discord", description: "Join our active community", iconColor: "text-success" },
+  ];
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title="Help & Support"
+        description="Find answers to common questions or get in touch with our support team"
+        centered
+      />
+
+      <div className="max-w-5xl mx-auto space-y-8">
           {/* Search */}
           <Card className="glass-card p-6">
             <div className="relative">
@@ -37,31 +43,7 @@ const HelpSupport = () => {
           </Card>
 
           {/* Quick Links */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="glass-card p-6 hover:border-primary/50 transition-all cursor-pointer group">
-              <BookOpen className="w-8 h-8 text-primary mb-3 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold mb-2">Documentation</h3>
-              <p className="text-sm text-muted-foreground">
-                Comprehensive guides and API references
-              </p>
-            </Card>
-
-            <Card className="glass-card p-6 hover:border-accent/50 transition-all cursor-pointer group">
-              <Video className="w-8 h-8 text-accent mb-3 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold mb-2">Video Tutorials</h3>
-              <p className="text-sm text-muted-foreground">
-                Learn through step-by-step video guides
-              </p>
-            </Card>
-
-            <Card className="glass-card p-6 hover:border-secondary/50 transition-all cursor-pointer group">
-              <MessageCircle className="w-8 h-8 text-secondary mb-3 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold mb-2">Community Forum</h3>
-              <p className="text-sm text-muted-foreground">
-                Connect with other users and experts
-              </p>
-            </Card>
-          </div>
+          <ResourceCard resources={quickLinks} />
 
           {/* FAQ */}
           <Card className="glass-card p-6">
@@ -148,29 +130,18 @@ const HelpSupport = () => {
 
             <form className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" placeholder="Your name" className="bg-muted/30" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="your@email.com" className="bg-muted/30" />
-                </div>
+                <FormField label="Name" id="name" placeholder="Your name" />
+                <FormField label="Email" id="email" type="email" placeholder="your@email.com" />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="subject">Subject</Label>
-                <Input id="subject" placeholder="How can we help?" className="bg-muted/30" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="message">Message</Label>
-                <Textarea 
-                  id="message" 
-                  placeholder="Describe your issue or question in detail..." 
-                  className="bg-muted/30 min-h-[150px]"
-                />
-              </div>
+              <FormField label="Subject" id="subject" placeholder="How can we help?" />
+              <FormField 
+                label="Message" 
+                id="message" 
+                type="textarea" 
+                placeholder="Describe your issue or question in detail..." 
+                rows={5}
+              />
 
               <div className="flex gap-3">
                 <Button className="bg-gradient-primary hover:opacity-90 gap-2">
@@ -200,39 +171,22 @@ const HelpSupport = () => {
           <Card className="glass-card p-6">
             <h2 className="text-2xl font-semibold mb-6">Additional Resources</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button variant="outline" className="justify-start gap-3 h-auto py-4">
-                <BookOpen className="w-5 h-5 text-primary" />
-                <div className="text-left">
-                  <p className="font-semibold">API Documentation</p>
-                  <p className="text-xs text-muted-foreground">Complete API reference and examples</p>
-                </div>
-              </Button>
-              <Button variant="outline" className="justify-start gap-3 h-auto py-4">
-                <Video className="w-5 h-5 text-accent" />
-                <div className="text-left">
-                  <p className="font-semibold">Getting Started Guide</p>
-                  <p className="text-xs text-muted-foreground">Step-by-step tutorial for beginners</p>
-                </div>
-              </Button>
-              <Button variant="outline" className="justify-start gap-3 h-auto py-4">
-                <FileText className="w-5 h-5 text-secondary" />
-                <div className="text-left">
-                  <p className="font-semibold">Best Practices</p>
-                  <p className="text-xs text-muted-foreground">Tips for optimal training results</p>
-                </div>
-              </Button>
-              <Button variant="outline" className="justify-start gap-3 h-auto py-4">
-                <MessageCircle className="w-5 h-5 text-success" />
-                <div className="text-left">
-                  <p className="font-semibold">Community Discord</p>
-                  <p className="text-xs text-muted-foreground">Join our active community</p>
-                </div>
-              </Button>
+              {additionalResources.map((resource, idx) => {
+                const Icon = resource.icon;
+                return (
+                  <Button key={idx} variant="outline" className="justify-start gap-3 h-auto py-4">
+                    <Icon className={`w-5 h-5 ${resource.iconColor}`} />
+                    <div className="text-left">
+                      <p className="font-semibold">{resource.title}</p>
+                      <p className="text-xs text-muted-foreground">{resource.description}</p>
+                    </div>
+                  </Button>
+                );
+              })}
             </div>
           </Card>
         </div>
-      </main>
-    </div>
+    </PageLayout>
   );
 };
 
