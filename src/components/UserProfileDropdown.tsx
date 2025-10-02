@@ -2,6 +2,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { User, Settings, LogOut, CreditCard, HelpCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const UserProfileDropdown = () => {
   return (
@@ -23,22 +24,30 @@ export const UserProfileDropdown = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">
-          <User className="mr-2 h-4 w-4" />
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">
-          <Settings className="mr-2 h-4 w-4" />
-          Settings
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">
-          <CreditCard className="mr-2 h-4 w-4" />
-          Billing
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">
-          <HelpCircle className="mr-2 h-4 w-4" />
-          Help & Support
-        </DropdownMenuItem>
+        <Link to="/profile">
+          <DropdownMenuItem className="cursor-pointer">
+            <User className="mr-2 h-4 w-4" />
+            Profile
+          </DropdownMenuItem>
+        </Link>
+        <Link to="/settings">
+          <DropdownMenuItem className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </DropdownMenuItem>
+        </Link>
+        <Link to="/billing">
+          <DropdownMenuItem className="cursor-pointer">
+            <CreditCard className="mr-2 h-4 w-4" />
+            Billing
+          </DropdownMenuItem>
+        </Link>
+        <Link to="/help-support">
+          <DropdownMenuItem className="cursor-pointer">
+            <HelpCircle className="mr-2 h-4 w-4" />
+            Help & Support
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
           <LogOut className="mr-2 h-4 w-4" />
