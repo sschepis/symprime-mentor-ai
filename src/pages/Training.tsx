@@ -9,27 +9,33 @@ import { TrainingConfig } from "@/components/training/TrainingConfig";
 import { TrainingFeed } from "@/components/training/TrainingFeed";
 import { TrainingSettingsDialog } from "@/components/dialogs/TrainingSettingsDialog";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
+import { useTraining, useEngines } from "@/contexts";
 
 const Training = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
   const [stopDialogOpen, setStopDialogOpen] = useState(false);
+  
+  const { currentSession, pauseTraining, stopTraining, resumeTraining } = useTraining();
+  const { selectedEngine } = useEngines();
 
-  const currentSession = 45;
-  const totalSessions = 100;
-  const autonomy = 78;
+  const autonomy = selectedEngine?.autonomy || 0;
   const successRate = 82;
   const patternRecognition = 156;
   const entropy = 3.2;
   const temperature = 0.65;
 
   const handlePause = () => {
-    console.log("Training paused");
+    if (currentSession?.status === "running") {
+      pauseTraining();
+    } else {
+      resumeTraining();
+    }
     setPauseDialogOpen(false);
   };
 
   const handleStop = () => {
-    console.log("Training stopped");
+    stopTraining();
     setStopDialogOpen(false);
   };
 
@@ -47,7 +53,7 @@ const Training = () => {
               Training Studio
             </h1>
             <p className="text-muted-foreground mt-2">
-              Greek Mythology Engine • Session {currentSession}/{totalSessions}
+              {selectedEngine?.name || "No Engine Selected"} • {currentSession ? `Session ${currentSession.progress}%` : "No active session"}
             </p>
           </div>
         </header>
@@ -68,10 +74,10 @@ const Training = () => {
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-lg font-semibold">Training Progress</h3>
                   <span className="text-sm text-muted-foreground">
-                    Session {currentSession}/{totalSessions}
+                    {currentSession ? `${currentSession.examplesProcessed} examples processed` : "No active session"}
                   </span>
                 </div>
-                <Progress value={(currentSession / totalSessions) * 100} className="h-3" />
+                <Progress value={currentSession?.progress || 0} className="h-3" />
               </div>
 
               {/* Current Autonomy */}

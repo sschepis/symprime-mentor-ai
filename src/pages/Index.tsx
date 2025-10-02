@@ -11,24 +11,25 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { StatsGrid, StatItem } from "@/components/common/StatsGrid";
 import { ActivityList, ActivityItem } from "@/components/common/ActivityList";
 import { BarChart3, Target } from "lucide-react";
+import { useEngines, useTraining } from "@/contexts";
 
 const Index = () => {
   const [newEngineOpen, setNewEngineOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [selectedEngine, setSelectedEngine] = useState<any>(null);
+  const { engines, selectedEngine, setSelectedEngine } = useEngines();
+  const { trainingSessions } = useTraining();
 
-  const engines = [
-    { name: "Greek Mythology Engine", autonomy: 85, trainingSessions: 120, lastUsed: "2 hours ago", icon: "🧠" },
-    { name: "Historical Analysis Engine", autonomy: 72, trainingSessions: 80, lastUsed: "1 day ago", icon: "📚" },
-    { name: "Scientific Research Engine", autonomy: 68, trainingSessions: 65, lastUsed: "3 days ago", icon: "🔬" },
-    { name: "Cultural Context Engine", autonomy: 91, trainingSessions: 200, lastUsed: "30 minutes ago", icon: "🌍" },
-  ];
+  const activeTrainingSessions = trainingSessions.filter(s => s.status === "running").length;
+
+  const avgAutonomy = engines.length > 0 
+    ? Math.round(engines.reduce((sum, e) => sum + e.autonomy, 0) / engines.length)
+    : 0;
 
   const stats: StatItem[] = [
-    { icon: Brain, label: "Engines", value: "5", change: "+2 this week", iconColor: "text-primary" },
-    { icon: Zap, label: "Training Sessions", value: "12", change: "3 active", iconColor: "text-accent" },
+    { icon: Brain, label: "Engines", value: engines.length.toString(), change: "+2 this week", iconColor: "text-primary" },
+    { icon: Zap, label: "Training Sessions", value: trainingSessions.length.toString(), change: `${activeTrainingSessions} active`, iconColor: "text-accent" },
     { icon: MessageSquare, label: "Queries", value: "1.2k", change: "+15% this week", iconColor: "text-secondary" },
-    { icon: TrendingUp, label: "Avg Autonomy", value: "82%", change: "+5% improvement", iconColor: "text-success" },
+    { icon: TrendingUp, label: "Avg Autonomy", value: `${avgAutonomy}%`, change: "+5% improvement", iconColor: "text-success" },
   ];
 
   const activities: ActivityItem[] = [
@@ -39,7 +40,7 @@ const Index = () => {
     { icon: Zap, title: "Training session started", description: "Cultural Context Engine", time: "5 hours ago", color: "text-accent" },
   ];
 
-  const handleEngineClick = (engine: any) => {
+  const handleEngineClick = (engine: typeof engines[0]) => {
     setSelectedEngine(engine);
     setDetailsOpen(true);
   };

@@ -6,13 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Mail, MapPin, Briefcase, Github, Twitter, Linkedin, Globe } from "lucide-react";
+import { useUser, useEngines, useTraining } from "@/contexts";
 
 const Profile = () => {
+  const { user } = useUser();
+  const { engines } = useEngines();
+  const { trainingSessions } = useTraining();
+
+  if (!user) return null;
+
+  const avgAutonomy = engines.length > 0 
+    ? Math.round(engines.reduce((sum, e) => sum + e.autonomy, 0) / engines.length)
+    : 0;
+
   const stats: StatItem[] = [
-    { label: "Engines", value: "5" },
-    { label: "Training Sessions", value: "357" },
+    { label: "Engines", value: engines.length.toString() },
+    { label: "Training Sessions", value: trainingSessions.length.toString() },
     { label: "Queries Processed", value: "12.4k" },
-    { label: "Avg Autonomy", value: "82%" },
+    { label: "Avg Autonomy", value: `${avgAutonomy}%` },
   ];
 
   return (
@@ -23,32 +34,32 @@ const Profile = () => {
             <div className="flex flex-col md:flex-row gap-6">
               <Avatar className="w-32 h-32">
                 <AvatarFallback className="bg-gradient-primary text-white text-4xl">
-                  JD
+                  {user.avatar}
                 </AvatarFallback>
               </Avatar>
               
               <div className="flex-1 space-y-4">
                 <div>
-                  <h1 className="text-3xl font-bold">John Doe</h1>
-                  <p className="text-lg text-muted-foreground">AI Researcher & Symbolic Intelligence Enthusiast</p>
+                  <h1 className="text-3xl font-bold">{user.name}</h1>
+                  <p className="text-lg text-muted-foreground">{user.role}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                    Premium Member
+                    {user.subscription.charAt(0).toUpperCase() + user.subscription.slice(1)} Member
                   </Badge>
                   <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20">
                     Early Adopter
                   </Badge>
                   <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/20">
-                    5 Active Engines
+                    {engines.length} Active Engines
                   </Badge>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Mail className="w-4 h-4" />
-                    john@example.com
+                    {user.email}
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="w-4 h-4" />
@@ -60,7 +71,7 @@ const Profile = () => {
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="w-4 h-4" />
-                    Joined March 2024
+                    Joined {user.joinedDate}
                   </div>
                 </div>
 
