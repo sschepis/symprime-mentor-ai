@@ -28,11 +28,12 @@ export const ResourceCard = ({ resources, columns = 3 }: ResourceCardProps) => {
         return (
           <Card 
             key={idx}
-            className="glass-card p-6 hover:border-primary/50 transition-all cursor-pointer group"
+            className="glass-card p-6 hover:border-primary/50 hover:shadow-glow-primary transition-all duration-300 cursor-pointer group hover:scale-105 hover:-translate-y-1 animate-fade-in"
             onClick={resource.onClick}
+            style={{ animationDelay: `${idx * 100}ms` }}
           >
-            <Icon className={`w-8 h-8 mb-3 group-hover:scale-110 transition-transform ${resource.iconColor || 'text-primary'}`} />
-            <h3 className="font-semibold mb-2">{resource.title}</h3>
+            <Icon className={`w-8 h-8 mb-3 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 ${resource.iconColor || 'text-primary'}`} />
+            <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors duration-200">{resource.title}</h3>
             <p className="text-sm text-muted-foreground">
               {resource.description}
             </p>

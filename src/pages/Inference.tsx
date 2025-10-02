@@ -25,12 +25,12 @@ const Inference = () => {
       
       <main className="relative flex-1 container mx-auto px-6 py-8 flex flex-col">
         {/* Header */}
-        <header className="mb-6 flex items-start justify-between">
+        <header className="mb-6 flex items-start justify-between animate-fade-in">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block">
               Inference Chat
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground mt-2 animate-fade-in" style={{ animationDelay: '100ms' }}>
               Natural language interaction with Greek Mythology Engine
             </p>
           </div>
@@ -38,7 +38,7 @@ const Inference = () => {
           {/* Chat Actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button variant="outline" size="icon" className="hover:scale-110 transition-all duration-200 hover:bg-primary/10">
                 <Settings className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -62,11 +62,11 @@ const Inference = () => {
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Chat Area */}
           <div className="lg:col-span-8 flex flex-col">
-            <Card className="glass-card flex-1 p-6 flex flex-col">
+            <Card className="glass-card flex-1 p-6 flex flex-col animate-fade-in" style={{ animationDelay: '200ms' }}>
               {/* Messages */}
               <div className="flex-1 space-y-6 overflow-y-auto mb-6">
                 {/* AI Message */}
-                <div className="flex gap-4">
+                <div className="flex gap-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
                   <div className="p-2 h-fit rounded-lg bg-gradient-ai">
                     <Bot className="w-5 h-5 text-white" />
                   </div>
@@ -83,7 +83,7 @@ const Inference = () => {
                 </div>
 
                 {/* User Message */}
-                <div className="flex gap-4 flex-row-reverse">
+                <div className="flex gap-4 flex-row-reverse animate-fade-in" style={{ animationDelay: '400ms' }}>
                   <div className="p-2 h-fit rounded-lg bg-primary">
                     <User className="w-5 h-5 text-white" />
                   </div>
@@ -98,7 +98,7 @@ const Inference = () => {
                 </div>
 
                 {/* AI Response */}
-                <div className="flex gap-4">
+                <div className="flex gap-4 animate-fade-in" style={{ animationDelay: '500ms' }}>
                   <div className="p-2 h-fit rounded-lg bg-gradient-ai">
                     <Bot className="w-5 h-5 text-white" />
                   </div>
@@ -133,12 +133,12 @@ const Inference = () => {
               </div>
 
               {/* Input Area */}
-              <div className="flex gap-3">
+              <div className="flex gap-3 animate-fade-in" style={{ animationDelay: '600ms' }}>
                 <Input 
                   placeholder="Ask about Greek mythology..." 
-                  className="flex-1 bg-muted/30 border-border/50 focus-visible:ring-primary"
+                  className="flex-1 bg-muted/30 border-border/50 focus-visible:ring-primary transition-all duration-200 focus:scale-[1.02]"
                 />
-                <Button className="gap-2 bg-gradient-primary hover:opacity-90 transition-opacity">
+                <Button className="gap-2 bg-gradient-primary hover:opacity-90 transition-all duration-200 hover:scale-105 hover:shadow-lg">
                   <Send className="w-4 h-4" />
                   Send
                 </Button>
@@ -148,7 +148,7 @@ const Inference = () => {
 
           {/* Sidebar - Context & Info */}
           <div className="lg:col-span-4 space-y-6">
-            <Card className="glass-card p-6">
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '300ms' }}>
               <h3 className="font-semibold mb-4">Active Engine</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -161,7 +161,7 @@ const Inference = () => {
               </div>
             </Card>
 
-            <Card className="glass-card p-6">
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '400ms' }}>
               <h3 className="font-semibold mb-4">Conversation Stats</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
@@ -179,16 +179,16 @@ const Inference = () => {
               </div>
             </Card>
 
-            <Card className="glass-card p-6">
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '500ms' }}>
               <h3 className="font-semibold mb-4">Suggested Topics</h3>
               <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button variant="outline" className="w-full justify-start text-sm hover:bg-primary/10 hover:text-primary transition-all duration-200 hover:scale-105">
                   The Twelve Olympians
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button variant="outline" className="w-full justify-start text-sm hover:bg-primary/10 hover:text-primary transition-all duration-200 hover:scale-105">
                   Heroes and Monsters
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button variant="outline" className="w-full justify-start text-sm hover:bg-primary/10 hover:text-primary transition-all duration-200 hover:scale-105">
                   Creation Myths
                 </Button>
               </div>

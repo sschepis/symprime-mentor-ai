@@ -15,16 +15,16 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl animate-fade-in">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="p-2 rounded-lg bg-gradient-primary">
-              <Brain className="w-6 h-6 text-white" />
+            <div className="p-2 rounded-lg bg-gradient-primary transition-all duration-300 group-hover:shadow-lg group-hover:scale-110">
+              <Brain className="w-6 h-6 text-white transition-transform duration-300 group-hover:rotate-12" />
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent transition-all duration-300 group-hover:scale-105">
                 SymPrime AI
               </h1>
               <p className="text-xs text-muted-foreground">Symbolic Intelligence</p>
@@ -42,11 +42,14 @@ export const Navigation = () => {
                   <Button
                     variant="ghost"
                     className={cn(
-                      "gap-2 transition-all",
+                      "gap-2 transition-all duration-200 hover:scale-105",
                       isActive && "bg-primary/10 text-primary font-medium"
                     )}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      isActive && "scale-110"
+                    )} />
                     {link.label}
                   </Button>
                 </Link>

@@ -47,12 +47,12 @@ const Training = () => {
       
       <main className="relative container mx-auto px-6 py-8">
         {/* Header */}
-        <header className="flex items-center justify-between mb-8">
+        <header className="flex items-center justify-between mb-8 animate-fade-in">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block">
               Training Studio
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground mt-2 animate-fade-in" style={{ animationDelay: '100ms' }}>
               {selectedEngine?.name || "No Engine Selected"} • {currentSession ? `Session ${currentSession.progress}%` : "No active session"}
             </p>
           </div>
@@ -69,7 +69,7 @@ const Training = () => {
           {/* Center Column - Progress & Feed */}
           <div className="lg:col-span-6 space-y-6">
             {/* Training Progress */}
-            <Card className="glass-card p-6 space-y-6">
+            <Card className="glass-card p-6 space-y-6 animate-fade-in hover:shadow-glow-primary transition-all duration-300" style={{ animationDelay: '300ms' }}>
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-lg font-semibold">Training Progress</h3>
@@ -125,7 +125,7 @@ const Training = () => {
               <div className="flex gap-3 pt-4">
                 <Button 
                   variant="outline" 
-                  className="flex-1 gap-2"
+                  className="flex-1 gap-2 hover:scale-105 transition-all duration-200 hover:bg-accent/10"
                   onClick={() => setPauseDialogOpen(true)}
                 >
                   <Pause className="w-4 h-4" />
@@ -133,7 +133,7 @@ const Training = () => {
                 </Button>
                 <Button 
                   variant="destructive" 
-                  className="flex-1 gap-2"
+                  className="flex-1 gap-2 hover:scale-105 transition-all duration-200 hover:shadow-lg"
                   onClick={() => setStopDialogOpen(true)}
                 >
                   <Square className="w-4 h-4" />
@@ -143,6 +143,7 @@ const Training = () => {
                   variant="outline" 
                   size="icon"
                   onClick={() => setSettingsOpen(true)}
+                  className="hover:scale-110 transition-all duration-200 hover:bg-primary/10"
                 >
                   <SettingsIcon className="w-4 h-4" />
                 </Button>
@@ -155,16 +156,16 @@ const Training = () => {
 
           {/* Right Column - Real-time Visualizations */}
           <div className="lg:col-span-3 space-y-6">
-            <Card className="glass-card p-6">
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '400ms' }}>
               <h3 className="text-lg font-semibold mb-4">Symbol Network</h3>
-              <div className="aspect-square bg-muted/20 rounded-lg flex items-center justify-center">
+              <div className="aspect-square bg-muted/20 rounded-lg flex items-center justify-center hover:bg-muted/30 transition-colors duration-300">
                 <p className="text-sm text-muted-foreground">Network visualization</p>
               </div>
             </Card>
 
-            <Card className="glass-card p-6">
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '500ms' }}>
               <h3 className="text-lg font-semibold mb-4">Autonomy Over Time</h3>
-              <div className="h-32 bg-muted/20 rounded-lg flex items-center justify-center">
+              <div className="h-32 bg-muted/20 rounded-lg flex items-center justify-center hover:bg-muted/30 transition-colors duration-300">
                 <p className="text-sm text-muted-foreground">Chart placeholder</p>
               </div>
             </Card>

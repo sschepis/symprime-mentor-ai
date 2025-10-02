@@ -20,14 +20,14 @@ export const EngineCard = ({
   icon 
 }: EngineCardProps) => {
   return (
-    <Card className="glass-card p-6 hover:border-primary/50 transition-all duration-300 group cursor-pointer">
+    <Card className="glass-card p-6 hover:border-primary/50 hover:shadow-glow-primary transition-all duration-300 group cursor-pointer hover:scale-105 hover:-translate-y-1 animate-fade-in">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="text-3xl">{icon}</div>
+            <div className="text-3xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">{icon}</div>
             <div>
-              <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+              <h3 className="font-semibold text-lg group-hover:text-primary transition-colors duration-200">
                 {name}
               </h3>
               <p className="text-sm text-muted-foreground">
@@ -41,9 +41,9 @@ export const EngineCard = ({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Autonomy</span>
-            <span className="font-semibold text-primary">{autonomy}%</span>
+            <span className="font-semibold text-primary transition-all duration-300 group-hover:scale-110 inline-block">{autonomy}%</span>
           </div>
-          <Progress value={autonomy} className="h-2" />
+          <Progress value={autonomy} className="h-2 transition-all duration-500" />
         </div>
 
         {/* Stats */}
@@ -54,13 +54,13 @@ export const EngineCard = ({
         {/* Actions */}
         <div className="flex gap-2 pt-2">
           <Link to="/training" className="flex-1">
-            <Button variant="outline" className="w-full gap-2 hover:bg-accent/10 hover:text-accent hover:border-accent transition-colors">
-              <Zap className="w-4 h-4" />
+            <Button variant="outline" className="w-full gap-2 hover:bg-accent/10 hover:text-accent hover:border-accent transition-all duration-200 hover:scale-105">
+              <Zap className="w-4 h-4 transition-transform duration-200 hover:rotate-12" />
               Train
             </Button>
           </Link>
           <Link to="/inference" className="flex-1">
-            <Button className="w-full gap-2 bg-gradient-primary hover:opacity-90 transition-opacity">
+            <Button className="w-full gap-2 bg-gradient-primary hover:opacity-90 transition-all duration-200 hover:scale-105 hover:shadow-lg">
               <MessageSquare className="w-4 h-4" />
               Chat
             </Button>

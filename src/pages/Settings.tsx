@@ -16,34 +16,34 @@ const Settings = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
       
       <main className="relative container mx-auto px-6 py-8">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        <header className="mb-8 animate-fade-in">
+          <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block">
             Settings
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 animate-fade-in" style={{ animationDelay: '100ms' }}>
             Manage your account and application preferences
           </p>
         </header>
 
-        <Tabs defaultValue="profile" className="space-y-6">
+        <Tabs defaultValue="profile" className="space-y-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
           <TabsList className="bg-muted/30">
-            <TabsTrigger value="profile" className="gap-2">
+            <TabsTrigger value="profile" className="gap-2 transition-all duration-200 hover:scale-105">
               <User className="w-4 h-4" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="gap-2">
+            <TabsTrigger value="notifications" className="gap-2 transition-all duration-200 hover:scale-105">
               <Bell className="w-4 h-4" />
               Notifications
             </TabsTrigger>
-            <TabsTrigger value="security" className="gap-2">
+            <TabsTrigger value="security" className="gap-2 transition-all duration-200 hover:scale-105">
               <Shield className="w-4 h-4" />
               Security
             </TabsTrigger>
-            <TabsTrigger value="appearance" className="gap-2">
+            <TabsTrigger value="appearance" className="gap-2 transition-all duration-200 hover:scale-105">
               <Palette className="w-4 h-4" />
               Appearance
             </TabsTrigger>
-            <TabsTrigger value="data" className="gap-2">
+            <TabsTrigger value="data" className="gap-2 transition-all duration-200 hover:scale-105">
               <Database className="w-4 h-4" />
               Data & Privacy
             </TabsTrigger>
@@ -51,7 +51,7 @@ const Settings = () => {
 
           {/* Profile Tab */}
           <TabsContent value="profile" className="space-y-6">
-            <Card className="glass-card p-6">
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-primary transition-all duration-300">
               <h3 className="text-xl font-semibold mb-6">Profile Information</h3>
               
               <div className="flex items-center gap-6 mb-6">
@@ -93,10 +93,12 @@ const Settings = () => {
               </div>
 
               <div className="flex gap-3 mt-6">
-                <Button className="bg-gradient-primary hover:opacity-90">
+                <Button className="bg-gradient-primary hover:opacity-90 hover:scale-105 transition-all duration-200 hover:shadow-lg">
                   Save Changes
                 </Button>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" className="hover:scale-105 transition-all duration-200">
+                  Cancel
+                </Button>
               </div>
             </Card>
           </TabsContent>
