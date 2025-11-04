@@ -14,16 +14,259 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      conversations: {
+        Row: {
+          created_at: string | null
+          engine_id: string | null
+          id: string
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          engine_id?: string | null
+          id?: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          engine_id?: string | null
+          id?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_engine_id_fkey"
+            columns: ["engine_id"]
+            isOneToOne: false
+            referencedRelation: "engines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      engines: {
+        Row: {
+          accuracy: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          last_trained: string | null
+          model_type: string
+          name: string
+          status: Database["public"]["Enums"]["engine_status"] | null
+          training_time: number | null
+          updated_at: string | null
+          user_id: string
+          version: string | null
+        }
+        Insert: {
+          accuracy?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          last_trained?: string | null
+          model_type: string
+          name: string
+          status?: Database["public"]["Enums"]["engine_status"] | null
+          training_time?: number | null
+          updated_at?: string | null
+          user_id: string
+          version?: string | null
+        }
+        Update: {
+          accuracy?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          last_trained?: string | null
+          model_type?: string
+          name?: string
+          status?: Database["public"]["Enums"]["engine_status"] | null
+          training_time?: number | null
+          updated_at?: string | null
+          user_id?: string
+          version?: string | null
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar: string | null
+          created_at: string | null
+          email: string
+          id: string
+          joined_date: string | null
+          name: string
+          role: string | null
+          subscription: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar?: string | null
+          created_at?: string | null
+          email: string
+          id: string
+          joined_date?: string | null
+          name: string
+          role?: string | null
+          subscription?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          joined_date?: string | null
+          name?: string
+          role?: string | null
+          subscription?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      training_sessions: {
+        Row: {
+          batch_size: number | null
+          completed_at: string | null
+          created_at: string | null
+          dataset_size: number | null
+          engine_id: string
+          epochs: number | null
+          error_message: string | null
+          id: string
+          learning_rate: number | null
+          name: string
+          progress: number | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["training_status"] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          batch_size?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          dataset_size?: number | null
+          engine_id: string
+          epochs?: number | null
+          error_message?: string | null
+          id?: string
+          learning_rate?: number | null
+          name: string
+          progress?: number | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["training_status"] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          batch_size?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          dataset_size?: number | null
+          engine_id?: string
+          epochs?: number | null
+          error_message?: string | null
+          id?: string
+          learning_rate?: number | null
+          name?: string
+          progress?: number | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["training_status"] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_sessions_engine_id_fkey"
+            columns: ["engine_id"]
+            isOneToOne: false
+            referencedRelation: "engines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      engine_status: "active" | "training" | "paused" | "archived"
+      training_status:
+        | "pending"
+        | "running"
+        | "completed"
+        | "failed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +393,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      engine_status: ["active", "training", "paused", "archived"],
+      training_status: [
+        "pending",
+        "running",
+        "completed",
+        "failed",
+        "cancelled",
+      ],
+    },
   },
 } as const
