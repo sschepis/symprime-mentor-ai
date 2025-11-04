@@ -16,26 +16,27 @@ const Training = () => {
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
   const [stopDialogOpen, setStopDialogOpen] = useState(false);
   
-  const { currentSession, pauseTraining, stopTraining, resumeTraining } = useTraining();
+  const { currentSession, updateSession, cancelTraining } = useTraining();
   const { selectedEngine } = useEngines();
 
-  const autonomy = selectedEngine?.autonomy || 0;
+  const accuracy = selectedEngine?.accuracy || 0;
   const successRate = 82;
   const patternRecognition = 156;
   const entropy = 3.2;
   const temperature = 0.65;
 
-  const handlePause = () => {
-    if (currentSession?.status === "running") {
-      pauseTraining();
-    } else {
-      resumeTraining();
+  const handlePause = async () => {
+    if (currentSession) {
+      const newStatus = currentSession.status === "running" ? "pending" : "running";
+      await updateSession(currentSession.id, { status: newStatus as any });
     }
     setPauseDialogOpen(false);
   };
 
-  const handleStop = () => {
-    stopTraining();
+  const handleStop = async () => {
+    if (currentSession) {
+      await cancelTraining(currentSession.id);
+    }
     setStopDialogOpen(false);
   };
 
@@ -74,28 +75,28 @@ const Training = () => {
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-lg font-semibold">Training Progress</h3>
                   <span className="text-sm text-muted-foreground">
-                    {currentSession ? `${currentSession.examplesProcessed} examples processed` : "No active session"}
+                    {currentSession ? `Processing: ${currentSession.progress}%` : "No active session"}
                   </span>
                 </div>
                 <Progress value={currentSession?.progress || 0} className="h-3" />
               </div>
 
-              {/* Current Autonomy */}
+              {/* Current Accuracy */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-medium text-muted-foreground">
-                    Current Autonomy
+                    Current Accuracy
                   </h4>
-                  <span className="text-2xl font-bold text-primary">{autonomy}%</span>
+                  <span className="text-2xl font-bold text-primary">{accuracy.toFixed(1)}%</span>
                 </div>
                 <div className="relative h-8 bg-muted rounded-full overflow-hidden">
                   <div 
                     className="absolute inset-y-0 left-0 bg-gradient-primary rounded-full transition-all duration-500"
-                    style={{ width: `${autonomy}%` }}
+                    style={{ width: `${accuracy}%` }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-sm font-semibold text-foreground mix-blend-difference">
-                      {autonomy}%
+                      {accuracy.toFixed(1)}%
                     </span>
                   </div>
                 </div>
@@ -164,7 +165,7 @@ const Training = () => {
             </Card>
 
             <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '500ms' }}>
-              <h3 className="text-lg font-semibold mb-4">Autonomy Over Time</h3>
+              <h3 className="text-lg font-semibold mb-4">Accuracy Over Time</h3>
               <div className="h-32 bg-muted/20 rounded-lg flex items-center justify-center hover:bg-muted/30 transition-colors duration-300">
                 <p className="text-sm text-muted-foreground">Chart placeholder</p>
               </div>

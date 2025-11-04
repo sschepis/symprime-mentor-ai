@@ -15,15 +15,15 @@ const Profile = () => {
 
   if (!user) return null;
 
-  const avgAutonomy = engines.length > 0 
-    ? Math.round(engines.reduce((sum, e) => sum + e.autonomy, 0) / engines.length)
+  const avgAccuracy = engines.length > 0 
+    ? Math.round(engines.reduce((sum, e) => sum + (e.accuracy || 0), 0) / engines.length)
     : 0;
 
   const stats: StatItem[] = [
     { label: "Engines", value: engines.length.toString() },
     { label: "Training Sessions", value: trainingSessions.length.toString() },
     { label: "Queries Processed", value: "12.4k" },
-    { label: "Avg Autonomy", value: `${avgAutonomy}%` },
+    { label: "Avg Accuracy", value: `${avgAccuracy}%` },
   ];
 
   return (

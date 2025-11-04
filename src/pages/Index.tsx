@@ -21,15 +21,15 @@ const Index = () => {
 
   const activeTrainingSessions = trainingSessions.filter(s => s.status === "running").length;
 
-  const avgAutonomy = engines.length > 0 
-    ? Math.round(engines.reduce((sum, e) => sum + e.autonomy, 0) / engines.length)
+  const avgAccuracy = engines.length > 0 
+    ? Math.round(engines.reduce((sum, e) => sum + (e.accuracy || 0), 0) / engines.length)
     : 0;
 
   const stats: StatItem[] = [
     { icon: Brain, label: "Engines", value: engines.length.toString(), change: "+2 this week", iconColor: "text-primary" },
     { icon: Zap, label: "Training Sessions", value: trainingSessions.length.toString(), change: `${activeTrainingSessions} active`, iconColor: "text-accent" },
     { icon: MessageSquare, label: "Queries", value: "1.2k", change: "+15% this week", iconColor: "text-secondary" },
-    { icon: TrendingUp, label: "Avg Autonomy", value: `${avgAutonomy}%`, change: "+5% improvement", iconColor: "text-success" },
+    { icon: TrendingUp, label: "Avg Accuracy", value: `${avgAccuracy}%`, change: "+5% improvement", iconColor: "text-success" },
   ];
 
   const activities: ActivityItem[] = [
@@ -83,8 +83,8 @@ const Index = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {engines.map((engine, idx) => (
-              <div key={engine.name} onClick={() => handleEngineClick(engine)} style={{ animationDelay: `${(idx + 1) * 100}ms` }}>
-                <EngineCard {...engine} />
+              <div key={engine.id} style={{ animationDelay: `${(idx + 1) * 100}ms` }}>
+                <EngineCard engine={engine} onClick={() => handleEngineClick(engine)} />
               </div>
             ))}
           </div>

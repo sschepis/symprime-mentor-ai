@@ -4,30 +4,32 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, Brain, Calendar, TrendingUp, Trash2, Settings } from "lucide-react";
+import { Engine } from "@/contexts/EngineContext";
+import { formatDistanceToNow } from "date-fns";
 
 interface EngineDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  engine: {
-    name: string;
-    icon: string;
-    autonomy: number;
-    trainingSessions: number;
-    lastUsed: string;
-  };
+  engine: Engine;
 }
 
 export const EngineDetailsDialog = ({ open, onOpenChange, engine }: EngineDetailsDialogProps) => {
+  const lastTrainedText = engine.last_trained 
+    ? formatDistanceToNow(new Date(engine.last_trained), { addSuffix: true })
+    : "Never";
+
+  const accuracyValue = engine.accuracy || 0;
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[700px] glass-card border-border/50 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            <span className="text-3xl">{engine.icon}</span>
+            <Brain className="w-6 h-6 text-primary" />
             {engine.name}
           </DialogTitle>
           <DialogDescription>
-            Detailed information and statistics
+            {engine.description || "Detailed information and statistics"}
           </DialogDescription>
         </DialogHeader>
 
@@ -39,13 +41,13 @@ export const EngineDetailsDialog = ({ open, onOpenChange, engine }: EngineDetail
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
-            {/* Autonomy */}
+            {/* Accuracy */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Current Autonomy</span>
-                <span className="text-2xl font-bold text-primary">{engine.autonomy}%</span>
+                <span className="text-sm font-medium">Current Accuracy</span>
+                <span className="text-2xl font-bold text-primary">{accuracyValue.toFixed(1)}%</span>
               </div>
-              <Progress value={engine.autonomy} className="h-3" />
+              <Progress value={accuracyValue} className="h-3" />
             </div>
 
             {/* Stats Grid */}
@@ -53,50 +55,44 @@ export const EngineDetailsDialog = ({ open, onOpenChange, engine }: EngineDetail
               <div className="bg-card p-4 rounded-lg border border-border/50">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                   <Brain className="w-4 h-4" />
-                  Training Sessions
+                  Model Type
                 </div>
-                <p className="text-2xl font-bold">{engine.trainingSessions}</p>
+                <p className="text-lg font-semibold capitalize">{engine.model_type}</p>
               </div>
               <div className="bg-card p-4 rounded-lg border border-border/50">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                   <Calendar className="w-4 h-4" />
-                  Last Used
+                  Last Trained
                 </div>
-                <p className="text-lg font-semibold">{engine.lastUsed}</p>
+                <p className="text-sm font-semibold">{lastTrainedText}</p>
               </div>
               <div className="bg-card p-4 rounded-lg border border-border/50">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                   <BarChart3 className="w-4 h-4" />
-                  Total Queries
+                  Status
                 </div>
-                <p className="text-2xl font-bold">2.4k</p>
+                <Badge variant="outline" className="capitalize">
+                  {engine.status}
+                </Badge>
               </div>
               <div className="bg-card p-4 rounded-lg border border-border/50">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                   <TrendingUp className="w-4 h-4" />
-                  Success Rate
+                  Version
                 </div>
-                <p className="text-2xl font-bold text-success">94%</p>
+                <p className="text-lg font-semibold">{engine.version}</p>
               </div>
             </div>
 
-            {/* Recent Activity */}
-            <div className="space-y-2">
-              <h4 className="text-sm font-semibold">Recent Training History</h4>
-              <div className="space-y-2">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="bg-success/10 text-success border-success/20">
-                        Completed
-                      </Badge>
-                      <span className="text-sm">Session #{120 - i}</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">{i} day{i > 1 ? 's' : ''} ago</span>
-                  </div>
-                ))}
+            {/* Training Time */}
+            {engine.training_time && (
+              <div className="bg-card p-4 rounded-lg border border-border/50">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-muted-foreground">Total Training Time</span>
+                  <span className="text-lg font-bold">{engine.training_time} minutes</span>
+                </div>
               </div>
-            </div>
+            )}
           </TabsContent>
 
           <TabsContent value="performance" className="space-y-4">
@@ -106,16 +102,16 @@ export const EngineDetailsDialog = ({ open, onOpenChange, engine }: EngineDetail
             
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center p-3 bg-card rounded-lg border border-border/50">
-                <p className="text-xs text-muted-foreground mb-1">Avg Response Time</p>
-                <p className="text-lg font-bold text-accent">320ms</p>
+                <p className="text-xs text-muted-foreground mb-1">Accuracy</p>
+                <p className="text-lg font-bold text-accent">{accuracyValue.toFixed(1)}%</p>
               </div>
               <div className="text-center p-3 bg-card rounded-lg border border-border/50">
-                <p className="text-xs text-muted-foreground mb-1">Symbols Learned</p>
-                <p className="text-lg font-bold text-secondary">1,247</p>
+                <p className="text-xs text-muted-foreground mb-1">Version</p>
+                <p className="text-lg font-bold text-secondary">{engine.version}</p>
               </div>
               <div className="text-center p-3 bg-card rounded-lg border border-border/50">
-                <p className="text-xs text-muted-foreground mb-1">Relationships</p>
-                <p className="text-lg font-bold text-primary">3,891</p>
+                <p className="text-xs text-muted-foreground mb-1">Status</p>
+                <p className="text-lg font-bold text-primary capitalize">{engine.status}</p>
               </div>
             </div>
           </TabsContent>
