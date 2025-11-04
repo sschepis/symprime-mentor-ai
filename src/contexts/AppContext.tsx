@@ -16,24 +16,37 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const defaultSettings: AppSettings = {
+  theme: "system",
+  notifications: true,
+  autoSave: true,
+  language: "en",
+};
+
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [settings, setSettings] = useState<AppSettings>(() => {
-    const saved = localStorage.getItem("app-settings");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          theme: "system",
-          notifications: true,
-          autoSave: true,
-          language: "en",
-        };
-  });
-
+  const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Load settings from localStorage after mount
   useEffect(() => {
-    localStorage.setItem("app-settings", JSON.stringify(settings));
-  }, [settings]);
+    const saved = localStorage.getItem("app-settings");
+    if (saved) {
+      try {
+        setSettings(JSON.parse(saved));
+      } catch (error) {
+        console.error("Failed to parse saved settings:", error);
+      }
+    }
+    setIsInitialized(true);
+  }, []);
+
+  // Save settings to localStorage when they change (skip first render)
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem("app-settings", JSON.stringify(settings));
+    }
+  }, [settings, isInitialized]);
 
   const updateSettings = (updates: Partial<AppSettings>) => {
     setSettings((prev) => ({ ...prev, ...updates }));
