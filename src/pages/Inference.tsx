@@ -3,10 +3,12 @@ import { Navigation } from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User, Download, Trash2, Settings, Plus } from "lucide-react";
+import { Send, Bot, User, Download, Trash2, Settings, Menu } from "lucide-react";
 import { ExportConversationDialog } from "@/components/dialogs/ExportConversationDialog";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
+import { ConversationSidebar } from "@/components/inference/ConversationSidebar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useConversation, useEngines } from "@/contexts";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
@@ -15,9 +17,20 @@ const Inference = () => {
   const [exportOpen, setExportOpen] = useState(false);
   const [clearChatOpen, setClearChatOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
-  const { currentConversation, messages, sendMessage, clearMessages, createConversation } = useConversation();
+  const { 
+    conversations,
+    currentConversation, 
+    messages, 
+    sendMessage, 
+    clearMessages, 
+    createConversation,
+    selectConversation,
+    deleteConversation,
+    refreshConversations,
+  } = useConversation();
   const { engines, selectedEngine } = useEngines();
 
   useEffect(() => {
@@ -31,6 +44,14 @@ const Inference = () => {
       createConversation(`Chat with ${engine.name}`, engine.id);
     }
   }, [currentConversation, engines, selectedEngine]);
+
+  const handleCreateNewConversation = async () => {
+    const engine = selectedEngine || engines[0];
+    if (engine) {
+      await createConversation(`New Chat - ${new Date().toLocaleDateString()}`, engine.id);
+      setSidebarOpen(false);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -60,13 +81,37 @@ const Inference = () => {
       <main className="relative flex-1 container mx-auto px-6 py-8 flex flex-col">
         {/* Header */}
         <header className="mb-6 flex items-start justify-between animate-fade-in">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block">
-              Inference Chat
-            </h1>
-            <p className="text-muted-foreground mt-2 animate-fade-in" style={{ animationDelay: '100ms' }}>
-              {currentConversation?.title || "Start a new conversation"}
-            </p>
+          <div className="flex items-center gap-3">
+            {/* Mobile Sidebar Toggle */}
+            <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="lg:hidden">
+                  <Menu className="w-4 h-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-80">
+                <ConversationSidebar
+                  conversations={conversations}
+                  currentConversation={currentConversation}
+                  onSelectConversation={(id) => {
+                    selectConversation(id);
+                    setSidebarOpen(false);
+                  }}
+                  onCreateConversation={handleCreateNewConversation}
+                  onDeleteConversation={deleteConversation}
+                  onRefresh={refreshConversations}
+                />
+              </SheetContent>
+            </Sheet>
+
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block">
+                Inference Chat
+              </h1>
+              <p className="text-muted-foreground mt-2 animate-fade-in" style={{ animationDelay: '100ms' }}>
+                {currentConversation?.title || "Start a new conversation"}
+              </p>
+            </div>
           </div>
           
           {/* Chat Actions */}
@@ -94,8 +139,20 @@ const Inference = () => {
 
         {/* Chat Container */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block lg:col-span-3">
+            <ConversationSidebar
+              conversations={conversations}
+              currentConversation={currentConversation}
+              onSelectConversation={selectConversation}
+              onCreateConversation={handleCreateNewConversation}
+              onDeleteConversation={deleteConversation}
+              onRefresh={refreshConversations}
+            />
+          </div>
+
           {/* Chat Area */}
-          <div className="lg:col-span-8 flex flex-col">
+          <div className="lg:col-span-6 flex flex-col">
             <Card className="glass-card flex-1 p-6 flex flex-col animate-fade-in" style={{ animationDelay: '200ms' }}>
               {/* Messages */}
               <ScrollArea className="flex-1 pr-4 mb-6">
@@ -156,7 +213,7 @@ const Inference = () => {
           </div>
 
           {/* Sidebar - Context & Info */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '300ms' }}>
               <h3 className="font-semibold mb-4">Active Engine</h3>
               <div className="space-y-3">
