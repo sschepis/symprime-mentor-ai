@@ -5,10 +5,39 @@ import { FormField } from "@/components/common/FormField";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Search, BookOpen, MessageCircle, Video, Mail, FileText, HelpCircle } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const HelpSupport = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!name || !email || !subject || !message) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      toast.success("Message sent successfully! We'll get back to you soon.");
+      setName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+      setIsSubmitting(false);
+    }, 1000);
+  };
   const quickLinks: ResourceCardData[] = [
     { icon: BookOpen, title: "Documentation", description: "Comprehensive guides and API references", iconColor: "text-primary" },
     { icon: Video, title: "Video Tutorials", description: "Learn through step-by-step video guides", iconColor: "text-accent" },
@@ -128,29 +157,62 @@ const HelpSupport = () => {
               Contact Support
             </h2>
 
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField label="Name" id="name" placeholder="Your name" />
-                <FormField label="Email" id="email" type="email" placeholder="your@email.com" />
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium">Name</label>
+                  <Input 
+                    id="name" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your name" 
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium">Email</label>
+                  <Input 
+                    id="email" 
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com" 
+                    required
+                  />
+                </div>
               </div>
 
-              <FormField label="Subject" id="subject" placeholder="How can we help?" />
-              <FormField 
-                label="Message" 
-                id="message" 
-                type="textarea" 
-                placeholder="Describe your issue or question in detail..." 
-                rows={5}
-              />
+              <div className="space-y-2">
+                <label htmlFor="subject" className="text-sm font-medium">Subject</label>
+                <Input 
+                  id="subject" 
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="How can we help?" 
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-sm font-medium">Message</label>
+                <Textarea 
+                  id="message" 
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Describe your issue or question in detail..." 
+                  rows={5}
+                  required
+                />
+              </div>
 
               <div className="flex gap-3">
-                <Button className="bg-gradient-primary hover:opacity-90 gap-2">
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="bg-gradient-primary hover:opacity-90 gap-2"
+                >
                   <Mail className="w-4 h-4" />
-                  Send Message
-                </Button>
-                <Button variant="outline" className="gap-2">
-                  <FileText className="w-4 h-4" />
-                  Attach Files
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </div>
             </form>
