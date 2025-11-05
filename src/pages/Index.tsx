@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { EngineCard } from "@/components/dashboard/EngineCard";
 import { NewEngineDialog } from "@/components/dialogs/NewEngineDialog";
 import { EngineDetailsDialog } from "@/components/dialogs/EngineDetailsDialog";
+import { StartTrainingDialog } from "@/components/dialogs/StartTrainingDialog";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StatsGrid, StatItem } from "@/components/common/StatsGrid";
@@ -15,6 +16,7 @@ import { useEngines, useTraining } from "@/contexts";
 
 const Index = () => {
   const [newEngineOpen, setNewEngineOpen] = useState(false);
+  const [startTrainingOpen, setStartTrainingOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const { engines, selectedEngine, setSelectedEngine } = useEngines();
   const { trainingSessions } = useTraining();
@@ -99,12 +101,14 @@ const Index = () => {
           {/* Quick Actions */}
           <Card className="glass-card p-6 space-y-4 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '400ms' }}>
             <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
-            <Link to="/training" className="block">
-              <Button variant="outline" className="w-full justify-start gap-3 hover:bg-primary/10 hover:scale-105 transition-all duration-200">
-                <Zap className="w-4 h-4 text-accent transition-transform duration-200 hover:rotate-12" />
-                Start Training
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-3 hover:bg-primary/10 hover:scale-105 transition-all duration-200"
+              onClick={() => setStartTrainingOpen(true)}
+            >
+              <Zap className="w-4 h-4 text-accent transition-transform duration-200 hover:rotate-12" />
+              Start Training
+            </Button>
             <Link to="/inference" className="block">
               <Button variant="outline" className="w-full justify-start gap-3 hover:bg-primary/10 hover:scale-105 transition-all duration-200">
                 <MessageSquare className="w-4 h-4 text-secondary" />
@@ -117,6 +121,7 @@ const Index = () => {
 
       {/* Dialogs */}
       <NewEngineDialog open={newEngineOpen} onOpenChange={setNewEngineOpen} />
+      <StartTrainingDialog open={startTrainingOpen} onOpenChange={setStartTrainingOpen} />
       {selectedEngine && (
         <EngineDetailsDialog 
           open={detailsOpen} 
