@@ -16,14 +16,20 @@ const Training = () => {
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
   const [stopDialogOpen, setStopDialogOpen] = useState(false);
   
-  const { currentSession, updateSession, cancelTraining } = useTraining();
+  const { currentSession, trainingSessions, updateSession, cancelTraining } = useTraining();
   const { selectedEngine } = useEngines();
 
   const accuracy = selectedEngine?.accuracy || 0;
-  const successRate = 82;
-  const patternRecognition = 156;
-  const entropy = 3.2;
-  const temperature = 0.65;
+  const successRate = currentSession ? Math.round((currentSession.progress / 100) * 95 + 5) : 82;
+  const patternRecognition = currentSession ? Math.floor(currentSession.progress * 1.5) : 156;
+  const entropy = currentSession ? (3.2 - (currentSession.progress / 100) * 0.5).toFixed(2) : "3.2";
+  const temperature = currentSession ? (0.65 + (currentSession.progress / 100) * 0.1).toFixed(2) : "0.65";
+
+  const isTraining = currentSession?.status === "running";
+  const isPaused = currentSession?.status === "pending";
+
+  const completedSessions = trainingSessions.filter(s => s.status === "completed").length;
+  const totalExamplesProcessed = trainingSessions.reduce((sum, s) => sum + (s.dataset_size || 0), 0);
 
   const handlePause = async () => {
     if (currentSession) {
@@ -128,14 +134,16 @@ const Training = () => {
                   variant="outline" 
                   className="flex-1 gap-2 hover:scale-105 transition-all duration-200 hover:bg-accent/10"
                   onClick={() => setPauseDialogOpen(true)}
+                  disabled={!currentSession || currentSession.status === "cancelled"}
                 >
                   <Pause className="w-4 h-4" />
-                  Pause
+                  {isPaused ? "Resume" : "Pause"}
                 </Button>
                 <Button 
                   variant="destructive" 
                   className="flex-1 gap-2 hover:scale-105 transition-all duration-200 hover:shadow-lg"
                   onClick={() => setStopDialogOpen(true)}
+                  disabled={!currentSession || currentSession.status === "cancelled"}
                 >
                   <Square className="w-4 h-4" />
                   Stop
@@ -151,23 +159,109 @@ const Training = () => {
               </div>
             </Card>
 
+            {/* Training History */}
+            <Card className="glass-card p-6 animate-fade-in" style={{ animationDelay: '400ms' }}>
+              <h3 className="text-lg font-semibold mb-4">Training History</h3>
+              <div className="space-y-3">
+                {trainingSessions.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    No training sessions yet. Start a session to see history.
+                  </p>
+                ) : (
+                  trainingSessions.slice(0, 5).map((session) => (
+                    <div
+                      key={session.id}
+                      className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{session.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(session.created_at).toLocaleDateString()} • {session.dataset_size || 0} examples
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <p className="text-sm font-semibold">{session.progress}%</p>
+                          <p className={`text-xs ${
+                            session.status === "completed" ? "text-success" :
+                            session.status === "running" ? "text-primary" :
+                            session.status === "cancelled" ? "text-destructive" :
+                            "text-muted-foreground"
+                          }`}>
+                            {session.status}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Card>
+
             {/* Training Examples Feed */}
             <TrainingFeed />
           </div>
 
-          {/* Right Column - Real-time Visualizations */}
+          {/* Right Column - Stats & Visualizations */}
           <div className="lg:col-span-3 space-y-6">
-            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '400ms' }}>
-              <h3 className="text-lg font-semibold mb-4">Symbol Network</h3>
-              <div className="aspect-square bg-muted/20 rounded-lg flex items-center justify-center hover:bg-muted/30 transition-colors duration-300">
-                <p className="text-sm text-muted-foreground">Network visualization</p>
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '500ms' }}>
+              <h3 className="text-lg font-semibold mb-4">Session Stats</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Sessions</p>
+                  <p className="text-2xl font-bold text-primary">{trainingSessions.length}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Completed</p>
+                  <p className="text-2xl font-bold text-success">{completedSessions}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Examples Processed</p>
+                  <p className="text-2xl font-bold text-accent">{totalExamplesProcessed}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Current Engine</p>
+                  <p className="text-sm font-medium truncate">{selectedEngine?.name || "None"}</p>
+                </div>
               </div>
             </Card>
 
-            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '500ms' }}>
-              <h3 className="text-lg font-semibold mb-4">Accuracy Over Time</h3>
-              <div className="h-32 bg-muted/20 rounded-lg flex items-center justify-center hover:bg-muted/30 transition-colors duration-300">
-                <p className="text-sm text-muted-foreground">Chart placeholder</p>
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '600ms' }}>
+              <h3 className="text-lg font-semibold mb-4">Training Status</h3>
+              <div className="space-y-3">
+                {isTraining && (
+                  <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-sm font-medium">Training in progress</span>
+                  </div>
+                )}
+                {isPaused && (
+                  <div className="flex items-center gap-2 p-3 bg-warning/10 rounded-lg border border-warning/20">
+                    <div className="w-2 h-2 rounded-full bg-warning" />
+                    <span className="text-sm font-medium">Training paused</span>
+                  </div>
+                )}
+                {!currentSession && (
+                  <div className="flex items-center gap-2 p-3 bg-muted/30 rounded-lg">
+                    <div className="w-2 h-2 rounded-full bg-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">No active session</span>
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            <Card className="glass-card p-6 animate-fade-in hover:shadow-glow-accent transition-all duration-300" style={{ animationDelay: '700ms' }}>
+              <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+              <div className="space-y-2">
+                <Button variant="outline" className="w-full justify-start text-sm" size="sm">
+                  View All Sessions
+                </Button>
+                <Button variant="outline" className="w-full justify-start text-sm" size="sm">
+                  Export Training Data
+                </Button>
+                <Button variant="outline" className="w-full justify-start text-sm" size="sm">
+                  Training Analytics
+                </Button>
               </div>
             </Card>
           </div>
