@@ -86,7 +86,7 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {engines.map((engine, idx) => (
               <div key={engine.id} style={{ animationDelay: `${(idx + 1) * 100}ms` }}>
-                <EngineCard engine={engine} onClick={() => handleEngineClick(engine)} />
+                <EngineCard engine={engine} />
               </div>
             ))}
           </div>
