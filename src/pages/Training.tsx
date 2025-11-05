@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,15 +9,43 @@ import { TrainingConfig } from "@/components/training/TrainingConfig";
 import { TrainingFeed } from "@/components/training/TrainingFeed";
 import { TrainingSettingsDialog } from "@/components/dialogs/TrainingSettingsDialog";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
-import { useTraining, useEngines } from "@/contexts";
+import { useTraining, useEngines, useUser } from "@/contexts";
+import { supabase } from "@/integrations/supabase/client";
 
 const Training = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
   const [stopDialogOpen, setStopDialogOpen] = useState(false);
   
-  const { currentSession, trainingSessions, updateSession, cancelTraining } = useTraining();
+  const { currentSession, trainingSessions, updateSession, cancelTraining, refreshSessions } = useTraining();
   const { selectedEngine } = useEngines();
+  const { user } = useUser();
+
+  // Real-time updates for training sessions
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('training-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'training_sessions',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Training session updated:', payload);
+          refreshSessions();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, refreshSessions]);
 
   const accuracy = selectedEngine?.accuracy || 0;
   const successRate = currentSession ? Math.round((currentSession.progress / 100) * 95 + 5) : 82;

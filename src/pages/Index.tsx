@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Brain, Zap, MessageSquare, TrendingUp, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,14 +12,42 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { StatsGrid, StatItem } from "@/components/common/StatsGrid";
 import { ActivityList, ActivityItem } from "@/components/common/ActivityList";
 import { BarChart3, Target } from "lucide-react";
-import { useEngines, useTraining } from "@/contexts";
+import { useEngines, useTraining, useUser } from "@/contexts";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [newEngineOpen, setNewEngineOpen] = useState(false);
   const [startTrainingOpen, setStartTrainingOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const { engines, selectedEngine, setSelectedEngine } = useEngines();
+  const { engines, selectedEngine, setSelectedEngine, refreshEngines } = useEngines();
   const { trainingSessions } = useTraining();
+  const { user } = useUser();
+
+  // Real-time updates for engines
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('engine-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'engines',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Engine updated:', payload);
+          refreshEngines();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, refreshEngines]);
 
   const activeTrainingSessions = trainingSessions.filter(s => s.status === "running").length;
 

@@ -9,9 +9,10 @@ import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 import { ConversationSidebar } from "@/components/inference/ConversationSidebar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useConversation, useEngines } from "@/contexts";
+import { useConversation, useEngines, useUser } from "@/contexts";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 
 const Inference = () => {
   const [exportOpen, setExportOpen] = useState(false);
@@ -32,10 +33,56 @@ const Inference = () => {
     refreshConversations,
   } = useConversation();
   const { engines, selectedEngine } = useEngines();
+  const { user } = useUser();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Real-time updates for conversations and messages
+  useEffect(() => {
+    if (!user) return;
+
+    const conversationChannel = supabase
+      .channel('conversation-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'conversations',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Conversation updated:', payload);
+          refreshConversations();
+        }
+      )
+      .subscribe();
+
+    const messageChannel = supabase
+      .channel('message-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages'
+        },
+        (payload) => {
+          console.log('New message:', payload);
+          if (currentConversation) {
+            refreshConversations();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(conversationChannel);
+      supabase.removeChannel(messageChannel);
+    };
+  }, [user, currentConversation, refreshConversations]);
 
   useEffect(() => {
     // Create initial conversation if none exists
