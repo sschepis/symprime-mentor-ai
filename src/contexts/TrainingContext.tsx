@@ -83,29 +83,37 @@ export const TrainingProvider = ({ children }: { children: ReactNode }) => {
     if (!session?.user?.id) return;
 
     try {
-      const { data, error } = await supabase
-        .from("training_sessions")
-        .insert([
-          {
-            user_id: session.user.id,
-            engine_id: engineId,
-            name: config.name || "Training Session",
-            status: "running",
-            progress: 0,
-            started_at: new Date().toISOString(),
-            dataset_size: config.dataset_size,
-            epochs: config.epochs,
-            batch_size: config.batch_size,
-            learning_rate: config.learning_rate,
+      // Call the edge function to start training
+      const { data: { session: authSession } } = await supabase.auth.getSession();
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/start-training`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authSession?.access_token}`,
           },
-        ])
-        .select()
-        .single();
+          body: JSON.stringify({
+            engine_id: engineId,
+            config: {
+              name: config.name || "Training Session",
+              dataset_size: config.dataset_size,
+              epochs: config.epochs,
+              batch_size: config.batch_size,
+              learning_rate: config.learning_rate,
+            },
+          }),
+        }
+      );
 
-      if (error) throw error;
+      const result = await response.json();
 
-      setTrainingSessions((prev) => [data, ...prev]);
-      setCurrentSession(data);
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to start training');
+      }
+
+      await refreshSessions();
 
       toast({
         title: "Training started",
@@ -115,7 +123,7 @@ export const TrainingProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error starting training:", error);
       toast({
         title: "Error starting training",
-        description: "Failed to start the training session",
+        description: error instanceof Error ? error.message : "Failed to start the training session",
         variant: "destructive",
       });
     }
